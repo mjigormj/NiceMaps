@@ -132,13 +132,11 @@ def analyze_traffic(G, traffic_model, label_encoder):
             edge_colors.append('Purple')  # Cor padrão para outras condições
             edge_weights[edge_key] = 1  # Peso padrão para outras condições
 
-
     # Define atributos de peso e cor para as arestas
     nx.set_edge_attributes(G, edge_weights, 'weight')
     nx.set_edge_attributes(G, dict(zip(G.edges(keys=True), edge_colors)), 'edge_color')
 
     return G
-
 
 def calculate_route_with_traffic():
     chosen_edge = edges[combo.get()]
@@ -149,7 +147,7 @@ def calculate_route_with_traffic():
     G_with_traffic = analyze_traffic(G.copy(), traffic_model, label_encoder)
 
     # Calcular o nó mais próximo das coordenadas de destino (apenas para fins de exemplo)
-    destination_node = ox.nearest_nodes(G_with_traffic, -23.599918, -46.676660)
+    destination_node = ox.nearest_nodes(G_with_traffic, -46.676660, -23.599918)
 
     # Calcular a rota mais curta considerando o tráfego
     route_with_traffic = nx.shortest_path(G_with_traffic, chosen_node, destination_node, weight='weight')
@@ -205,10 +203,6 @@ frame.grid(column=0, row=0, sticky=(tk.N, tk.W, tk.E, tk.S))
 frame.columnconfigure(0, weight=1)
 frame.rowconfigure(0, weight=1)
 
-# Adicione uma label para exibir a precisão
-#accuracy_label = ttk.Label(frame, text="Accuracy on test set: N/A")
-#accuracy_label.grid(column=1, row=2, columnspan=3)
-
 ttk.Label(frame, text="Escolha uma rua:").grid(column=1, row=1, sticky=tk.W)
 
 combo = ttk.Combobox(frame, width=40, values=list(edges.keys()))
@@ -217,6 +211,5 @@ combo.current(0)
 
 # Adicione um botão para mostrar todas as arestas
 ttk.Button(frame, text="Mostrar Todas as Ruas", command=calculate_route_with_traffic).grid(column=4, row=1)
-
 
 root.mainloop()
