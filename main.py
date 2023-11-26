@@ -2,7 +2,6 @@ import random
 import re
 import tkinter as tk
 from tkinter import ttk
-
 import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
@@ -11,10 +10,9 @@ from sklearn.cluster import DBSCAN
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import LabelEncoder
 from sklearn.utils import shuffle
-
 import utils
 from coordenadas import Coordenadas
-
+import matplotlib.patches as mpatches
 
 # Função de treinamento do modelo de tráfego
 def train_traffic_model():
@@ -66,33 +64,6 @@ def predict_traffic_conditions(model, label_encoder, features):
     predicted_classes = label_encoder.inverse_transform(predictions)
     return predicted_classes
 
-def show_all_edges():
-    # Iterar sobre todas as arestas do grafo e mostrar individualmente
-    fig, ax = plt.subplots(figsize=(8, 8))
-    ax.set_facecolor('Black')
-
-    ox.plot_graph(G, ax=ax, node_size=0, edge_color='White', edge_linewidth=0.5, show=False, close=False)
-    buildings.plot(ax=ax, color="Gray", alpha=0.5)
-    green_areas.plot(ax=ax, color='LightSeaGreen', alpha=0.5)
-
-    for edge in G.edges():
-        edge_str = str(edge)
-        edge_features = np.random.randint(5, 90, size=(1, 3))  # Substitua por seus próprios dados
-        predicted_traffic = predict_traffic_conditions(traffic_model, label_encoder, edge_features.reshape(1, -1))
-
-        if predicted_traffic[0] == 'moderado':
-            edge_color = 'Yellow'
-        elif predicted_traffic[0] == 'livre':
-            edge_color = 'Green'
-        elif predicted_traffic[0] == 'pesado':
-            edge_color = 'Red'
-        else:
-            edge_color = 'Purple'  # Adicione uma cor padrão para outras condições
-
-        ox.plot_graph_route(G, [edge[0], edge[1]], ax=ax, node_size=0, route_color=edge_color, route_linewidth=2, show=False, close=False)
-
-    plt.show()
-
 def analyze_traffic(G, traffic_model, label_encoder):
     # Coleta dados de tráfego para cada aresta do grafo
     edge_features = [
@@ -101,9 +72,6 @@ def analyze_traffic(G, traffic_model, label_encoder):
         [random.uniform(5, 20), random.uniform(60, 120), random.uniform(5, 25)]
     ]
     for u, v, data in G.edges(data=True):
-        # Aqui você precisa extrair as características de cada aresta
-        # Pode ser largura da rua, velocidade média, densidade, etc.
-        # Vou usar valores aleatórios para simular esses dados
         edge_data = [
             random.uniform(5, 20),  # Largura da rua
             random.uniform(60, 120),  # Velocidade média
@@ -155,16 +123,23 @@ def calculate_route_with_traffic():
     # Cria uma lista de cores para todas as arestas do grafo
     edge_colors = [G_with_traffic[u][v][0].get('edge_color', 'Purple') for u, v, k in G_with_traffic.edges(keys=True)]
 
-    # Agora, passe essa lista para a função ox.plot_graph_route
+    # Agora, passe essa lista para a função
     fig, ax = ox.plot_graph_route(G_with_traffic, route_with_traffic, edge_color=edge_colors, route_color="blue", node_size=0,
                                   route_linewidth=5, show=False, close=False)
 
-    # Adicionar informações visuais ao mapa
-    buildings.plot(ax=ax, color="Gray", alpha=0.5)
-    ox.plot_footprints(buildings, ax=ax, color='gray', alpha=0.5)
-    ax.set_title('Rota com Base no Tráfego')
+    # Cria as legendas
+    red_patch = mpatches.Patch(color='red', label='Pesado')
+    yellow_patch = mpatches.Patch(color='yellow', label='Moderado')
+    green_patch = mpatches.Patch(color='green', label='Livre')
 
-    plt.show()
+    # Adiciona as legendas ao gráfico
+    plt.legend(handles=[red_patch, yellow_patch, green_patch])
+
+    # Adicionar informações visuais ao mapa
+    ax.set_title('Rota com Base no Tráfego')
+    buildings.plot(ax=ax, color="Gray", alpha=0.5)
+    green_areas.plot(ax=ax, color='LightSeaGreen', alpha=0.5)
+    ox.plot_footprints(buildings, ax=ax, color='gray', alpha=0.5)
 
 # Dados iniciais
 coordenadasFixas = [
@@ -203,13 +178,12 @@ frame.grid(column=0, row=0, sticky=(tk.N, tk.W, tk.E, tk.S))
 frame.columnconfigure(0, weight=1)
 frame.rowconfigure(0, weight=1)
 
-ttk.Label(frame, text="Escolha uma rua:").grid(column=1, row=1, sticky=tk.W)
-
 combo = ttk.Combobox(frame, width=40, values=list(edges.keys()))
 combo.grid(column=2, row=1)
 combo.current(0)
 
 # Adicione um botão para mostrar todas as arestas
-ttk.Button(frame, text="Mostrar Todas as Ruas", command=calculate_route_with_traffic).grid(column=4, row=1)
+ttk.Button(frame, text="Calcular rota", command=calculate_route_with_traffic).grid(column=4, row=1)
 
+# Inicie o loop principal após configurar todos os elementos da interface gráfica
 root.mainloop()
