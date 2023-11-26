@@ -7,7 +7,6 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
 import osmnx as ox
-import networkx as nx
 from sklearn.cluster import DBSCAN
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import LabelEncoder
@@ -94,62 +93,6 @@ def show_all_edges():
 
     plt.show()
 
-def calculate_route():
-    chosen_edge_features = np.random.randint(5, 90, size=(1, 3)) 
-    chosen_edge = edges[combo.get()]
-    chosen_node = chosen_edge[0]
-    chosen_route = nx.shortest_path(G, chosen_node, utils.get_nearest_node(G, coordenadasFixas[1]))
-
-    # Verificação de rota válida
-    is_route_valid = True
-    for node1, node2 in zip(chosen_route[:-1], chosen_route[1:]):
-        edge_str = str((node1, node2))
-        if clusters.get(edge_str, -1) == -1:
-            is_route_valid = False
-            break
-
-    if not is_route_valid:
-        # Rota alternativa para evitar tráfego pesado
-        alternative_route = nx.shortest_path(G, chosen_node, utils.get_nearest_node(G, coordenadasFixas[1]))
-        is_alternative_valid = True
-        for node1, node2 in zip(alternative_route[:-1], alternative_route[1:]):
-            edge_str = str((node1, node2))
-            if clusters.get(edge_str, -1) != -1:
-                is_alternative_valid = False
-                break
-
-        if is_alternative_valid:
-            chosen_route = alternative_route
-
-    # Lógica de cores para tráfego pesado
-    predicted_traffic = predict_traffic_conditions(traffic_model, label_encoder, np.array(chosen_edge_features).reshape(1, -1))
-
-    # Iterar sobre cada trecho da rota e plotar individualmente
-    fig, ax = plt.subplots(figsize=(8, 8))
-    ax.set_facecolor('Black')
-
-    ox.plot_graph(G, ax=ax, node_size=0, edge_color='White', edge_linewidth=0.5, show=False, close=False)
-    buildings.plot(ax=ax, color="Gray", alpha=0.5)
-    green_areas.plot(ax=ax, color='LightSeaGreen', alpha=0.5)
-
-    for node1, node2 in zip(chosen_route[:-1], chosen_route[1:]):
-        edge_str = str((node1, node2))
-        edge_features = np.random.randint(5, 90, size=(1, 3))  
-        predicted_traffic = predict_traffic_conditions(traffic_model, label_encoder, edge_features.reshape(1, -1))
-
-        if predicted_traffic[0] == 'moderado':
-            edge_color = 'Yellow'
-        elif predicted_traffic[0] == 'livre':
-            edge_color = 'Green'
-        elif predicted_traffic[0] == 'pesado':
-            edge_color = 'Red'
-        else:
-            edge_color = 'purple'
-
-        ox.plot_graph_route(G, [node1, node2], ax=ax, node_size=0, route_color=edge_color, route_linewidth=2, show=False, close=False)
-
-    plt.show()
-
 def analyze_traffic(G, traffic_model, label_encoder):
     # Coleta dados de tráfego para cada aresta do grafo
     edge_features = [
@@ -198,17 +141,15 @@ def analyze_traffic(G, traffic_model, label_encoder):
 
 
 def calculate_route_with_traffic():
-    edge_features = np.random.randint(5, 90, size=(1, 3))
     chosen_edge = edges[combo.get()]
     # Obter o nó inicial da aresta escolhida
     chosen_node = chosen_edge[0]
 
-    # Calcular o nó mais próximo das coordenadas de destino (apenas para fins de exemplo)
-    destination_node = ox.distance.nearest_nodes(G, -23.595314, -46.689486)
-
-
     # Analisar o tráfego ao longo da rota calculada
     G_with_traffic = analyze_traffic(G.copy(), traffic_model, label_encoder)
+
+    # Calcular o nó mais próximo das coordenadas de destino (apenas para fins de exemplo)
+    destination_node = ox.nearest_nodes(G_with_traffic, -23.599918, -46.676660)
 
     # Calcular a rota mais curta considerando o tráfego
     route_with_traffic = nx.shortest_path(G_with_traffic, chosen_node, destination_node, weight='weight')
@@ -273,8 +214,6 @@ ttk.Label(frame, text="Escolha uma rua:").grid(column=1, row=1, sticky=tk.W)
 combo = ttk.Combobox(frame, width=40, values=list(edges.keys()))
 combo.grid(column=2, row=1)
 combo.current(0)
-
-ttk.Button(frame, text="Calcular rota", command=calculate_route).grid(column=3, row=1)
 
 # Adicione um botão para mostrar todas as arestas
 ttk.Button(frame, text="Mostrar Todas as Ruas", command=calculate_route_with_traffic).grid(column=4, row=1)
