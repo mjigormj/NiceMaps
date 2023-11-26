@@ -29,4 +29,4 @@ O projeto está estruturado da seguinte forma:
 1. Clone o repositório:
 
 ```bash
-git clone https://github.com/seu_usuario/nome_do_repositorio.git
+git clone https://github.com/mjigormj/NiceMaps.git
