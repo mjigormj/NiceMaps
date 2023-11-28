@@ -3,6 +3,9 @@
 
 Este é um projeto que utiliza dados de tráfego e visualiza rotas com base nessas previsões. A aplicação utiliza Python e a biblioteca OSMnx para criar visualizações interativas de mapas e prever condições de tráfego em um determinado ambiente urbano.
 
+![image](https://github.com/mjigormj/NiceMaps/assets/47676774/91822e89-e0e3-4ba8-9582-f14976ff0e69)
+
+
 ## Funcionalidades
 
 - **Previsão de Tráfego:** Utiliza um modelo de Machine Learning para prever as condições de tráfego em diferentes segmentos de estradas.
