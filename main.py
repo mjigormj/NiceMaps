@@ -2,17 +2,19 @@ import random
 import re
 import tkinter as tk
 from tkinter import ttk
+
+import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
 import osmnx as ox
-from sklearn.cluster import DBSCAN
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import LabelEncoder
 from sklearn.utils import shuffle
+
 import utils
 from coordenadas import Coordenadas
-import matplotlib.patches as mpatches
+
 
 # Função de treinamento do modelo de tráfego
 def train_traffic_model():
@@ -159,12 +161,6 @@ for i, edge in enumerate(edges_raw):
     clean_edges[f"{i}: {clean_edge_name}"] = edge
 
 edges = dict(sorted(clean_edges.items(), key=lambda item: item[1]))
-
-traffic_data = {str(edge): random.randint(0, 10000) for edge in edges.values()}
-X = np.array(list(traffic_data.values())).reshape(-1, 1)
-db = DBSCAN(eps=5, min_samples=5).fit(X)
-labels = db.labels_
-clusters = {str(edge): label for edge, label in zip(traffic_data.keys(), labels)}
 
 # Treinar o modelo de tráfego
 traffic_model, label_encoder = train_traffic_model()
