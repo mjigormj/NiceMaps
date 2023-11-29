@@ -5,6 +5,7 @@ import matplotlib.patches as mpatches
 
 from traffic_model import analyze_traffic
 
+
 def calculate_route_with_traffic(G, edges, combo, buildings, green_areas, traffic_model, label_encoder):
     """
     Calcula a rota com base no tráfego e exibe no mapa.
@@ -39,7 +40,8 @@ def calculate_route_with_traffic(G, edges, combo, buildings, green_areas, traffi
     edge_colors = [G_with_traffic[u][v][0].get('edge_color', 'Purple') for u, v, k in G_with_traffic.edges(keys=True)]
 
     # Agora, passe essa lista para a função
-    fig, ax = ox.plot_graph_route(G_with_traffic, route_with_traffic, edge_color=edge_colors, route_color="blue", node_size=0,
+    fig, ax = ox.plot_graph_route(G_with_traffic, route_with_traffic, edge_color=edge_colors, route_color="blue",
+                                  node_size=0,
                                   route_linewidth=5, show=False, close=False)
 
     # Cria as legendas

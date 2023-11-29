@@ -6,13 +6,6 @@ from sklearn.utils import shuffle
 
 
 def train_traffic_model():
-    # Largura da rua em metros, Velocidade média em km/h, Densidade de tráfego
-    features = [
-        [10, 90, 5],
-        [8, 60, 7],
-        [5, 30, 20]
-    ]
-
     labels = ['livre', 'moderado', 'pesado']
 
     # Criando um conjunto de dados balanceado
@@ -48,11 +41,13 @@ def train_traffic_model():
 
     return model, label_encoder
 
+
 def predict_traffic_conditions(model, label_encoder, features):
     # Fazer previsões usando o modelo treinado
     predictions = model.predict(features)
     predicted_classes = label_encoder.inverse_transform(predictions)
     return predicted_classes
+
 
 def analyze_traffic(G, traffic_model, label_encoder):
     # Coleta dados de tráfego para cada aresta do grafo
