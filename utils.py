@@ -1,16 +1,18 @@
-import networkx as nx
 import osmnx as ox
+"""Importa a biblioteca OSMnx"""
 
-def create_graph_from_point(coordinate, dist=1500, network_type='drive'):
-    return ox.graph_from_point((coordinate.latitude, coordinate.longitude), dist=dist, network_type=network_type)
+class Coordenadas:
+    def __init__(self, nome, latitude, longitude, descricao):
+        self.nome = nome
+        self.latitude = latitude
+        self.longitude = longitude
+        self.descricao = descricao
+"""Define uma classe para representar coordenadas com nome, latitude, longitude e descrição"""
 
-def get_features(coordinate, tags, dist=1500):
-    return ox.features_from_point((coordinate.latitude, coordinate.longitude), tags=tags, dist=dist)
+def create_graph_from_point(coordenada):
+    return ox.graph_from_point((coordenada.latitude, coordenada.longitude), dist=1500, network_type='drive')
+"""Cria um grafo OpenStreetMap a partir de um ponto específico"""
 
-def get_nearest_node(G, coordinate):
-    return ox.nearest_nodes(G, coordinate.longitude, coordinate.latitude)
-
-def calculate_shortest_path(G, start_coordinate, end_coordinate):
-    start_node = get_nearest_node(G, start_coordinate)
-    end_node = get_nearest_node(G, end_coordinate)
-    return nx.shortest_path(G, start_node, end_node)
+def get_features(coordenada, tags):
+    return ox.features_from_point((coordenada.latitude, coordenada.longitude), tags=tags, dist=1500)
+"""Obtém características do mapa (como edifícios, áreas verdes) a partir de um ponto específico"""
