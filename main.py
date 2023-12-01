@@ -43,7 +43,7 @@ combo = ttk.Combobox(frame, width=40, values=list(edges.keys()))
 combo.grid(column=2, row=1)
 combo.current(0)
 
-# Adicione um botão para mostrar todas as arestas
+# Inicia o mapa
 ttk.Button(frame, text="Calcular rota", command=lambda: calculate_route_with_traffic(G, edges, combo, buildings,
                                                                                      green_areas, traffic_model,
                                                                                      label_encoder)).grid(column=4, row=1)

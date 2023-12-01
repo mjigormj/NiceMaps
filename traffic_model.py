@@ -1,5 +1,6 @@
 import networkx as nx
 import numpy as np
+import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import LabelEncoder
 from sklearn.utils import shuffle
@@ -15,17 +16,18 @@ def train_traffic_model():
     balanced_features = []
     balanced_labels = []
 
-    # Gerando dados balanceados
+    # Lendo os dados do arquivo CSV
+    data = pd.read_csv('dados.csv')
+
     for label_idx, label in enumerate(labels):
-        # Criando dados para cada classe de forma balanceada
+        # Filtrando os dados por classe
+        class_data = data[data['Label'] == label]  # Supondo que 'classe' seja a coluna que contém as classes
+
+        # Pegando amostras para cada classe de forma balanceada
         for _ in range(samples_per_class):
-            # Criando uma amostra com 33% de chance para cada valor
-            random_feature = [
-                np.random.choice([5, 8, 10]),
-                np.random.choice([30, 60, 90]),
-                np.random.choice([5, 7, 20])
-            ]
-            balanced_features.append(random_feature)
+            # Pegando uma linha aleatória do dataframe filtrado
+            random_feature = class_data.sample(1).values[0]
+            balanced_features.append(random_feature[:-1])  # Removendo a coluna de classe das features
             balanced_labels.append(label)
 
     # Embaralhando os dados
@@ -52,14 +54,14 @@ def predict_traffic_conditions(model, label_encoder, features):
 def analyze_traffic(G, traffic_model, label_encoder):
     # Coleta dados de tráfego para cada aresta do grafo
     edge_features = [
-        [np.random.uniform(5, 20), np.random.uniform(60, 120), np.random.uniform(5, 25)]
+        [np.random.uniform(4, 16), np.random.uniform(5, 60), np.random.uniform(1, 27)]
         for _ in range(3)
     ]
     for u, v, data in G.edges(data=True):
         edge_data = [
-            np.random.uniform(5, 20),  # Largura da rua
-            np.random.uniform(60, 120),  # Velocidade média
-            np.random.uniform(5, 25)  # Densidade de tráfego
+            np.random.uniform(4, 16),  # Largura da rua
+            np.random.uniform(5, 60),  # Velocidade média
+            np.random.uniform(1, 27)  # Densidade de tráfego
         ]
         edge_features.append(edge_data)
 

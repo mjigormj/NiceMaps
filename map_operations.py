@@ -1,7 +1,7 @@
+import matplotlib.patches as mpatches
+import matplotlib.pyplot as plt
 import networkx as nx
 import osmnx as ox
-import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
 
 from traffic_model import analyze_traffic
 
@@ -39,7 +39,7 @@ def calculate_route_with_traffic(G, edges, combo, buildings, green_areas, traffi
     # Cria uma lista de cores para todas as arestas do grafo
     edge_colors = [G_with_traffic[u][v][0].get('edge_color', 'Purple') for u, v, k in G_with_traffic.edges(keys=True)]
 
-    # Agora, passe essa lista para a função
+    # Passando lista para a função
     fig, ax = ox.plot_graph_route(G_with_traffic, route_with_traffic, edge_color=edge_colors, route_color="blue",
                                   node_size=0,
                                   route_linewidth=5, show=False, close=False)
