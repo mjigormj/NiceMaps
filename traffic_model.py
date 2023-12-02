@@ -20,7 +20,7 @@ def train_traffic_model():
     """Essas listas serão preenchidas com as características e rótulos das amostras balanceadas"""
     
     # Lendo os dados do arquivo CSV
-    data = pd.read_csv('dados.csv')
+    data = pd.read_csv('dados.csv', sep=";")
     """Carrega os dados do arquivo CSV chamado 'dados.csv' usando a biblioteca pandas"""
     
     for label_idx, label in enumerate(labels):
@@ -64,17 +64,15 @@ def predict_traffic_conditions(model, label_encoder, features):
 
 def analyze_traffic(G, traffic_model, label_encoder):
     # Coleta dados de tráfego para cada aresta do grafo
-    edge_features = [
-        """é uma lista de características fictícias para algumas arestas (substitua por dados reais)"""
-        [np.random.uniform(4, 16), np.random.uniform(5, 60), np.random.uniform(1, 27)]
-        for _ in range(3) #apenas adiciona algumas características fictícias como exemplo
-    ]
+    edge_features = []
 
     for u, v, data in G.edges(data=True):
         edge_data = [
             np.random.uniform(4, 16),  # Largura da rua
             np.random.uniform(5, 60),  # Velocidade média
-            np.random.uniform(1, 27)  # Densidade de tráfego
+            np.random.uniform(1, 27), # Densidade de tráfego
+            np.random.uniform(1, 4), # Clima
+            np.random.uniform(1, 3)  # Periodo
         ]
         edge_features.append(edge_data)
     """coleta características para todas as arestas reais no grafo"""
